@@ -1,23 +1,34 @@
 from pyrogram import Client # pip3 install -U pyrogram
 from datetime import datetime
 import asyncio
+import random
 import time
 
 async def mining_nrb():
     async with Client("my_account", api_id, api_hash) as app:
         await app.send_message(chat_id, "\U0001f579Игры")
-        time.sleep(10)
-        # эмодзи мини-игры: баскетбольный мяч, футбольный мяч, боулинг, дартс
-        dice_emojis = ["\U0001F3C0", "\u26BD", "\U0001F3B3", "\U0001F3AF"]
-        for emoji in dice_emojis:
-            await app.send_dice(chat_id, emoji)
-            time.sleep(10)
-            # получаем последнее сообщение из чата с ботом
-            async for message in app.get_chat_history(chat_id, limit=1):
-                last_message = message.text
-            # условие выполнится, когда угадаем нужный сегодня эмодзи
-            if last_message != "Команда не опознана":
-                break
+        time.sleep(30)
+        # получаем последнее сообщение из чата с ботом
+        async for message in app.get_chat_history(chat_id, limit=1):
+            last_message = message.text
+        if last_message == "Проверь свою интуицию: угадай, какое значение выпадет":
+            # отправляем случайное число от 1 до 6
+            await app.send_message(chat_id, random.randint(1,6))
+            time.sleep(30)
+            # затем кидаем кубик
+            await app.send_dice(chat_id, "\U0001f3b2")
+        elif last_message == "Okay, let's go!":
+            # эмодзи мини-игры: баскетбольный мяч, футбольный мяч, боулинг, дартс
+            dice_emojis = ["\U0001F3C0", "\u26BD", "\U0001F3B3", "\U0001F3AF"]
+            for emoji in dice_emojis:
+                await app.send_dice(chat_id, emoji)
+                time.sleep(30)
+                # получаем последнее сообщение из чата с ботом
+                async for message in app.get_chat_history(chat_id, limit=1):
+                    last_message = message.text
+                # условие выполнится, когда угадаем нужный сегодня эмодзи
+                if last_message != "Команда не опознана":
+                    break
 
 if __name__ == "__main__":
     api_id = 12345
